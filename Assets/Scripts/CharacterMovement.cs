@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public class CharacterMovement : MonoBehaviour
 {
+    public FixedJoystick leftJoystick;
+    public FixedButton button;
+    public FixedTouchField touchField;
 
     private enum ControlMode
     {
@@ -96,17 +99,25 @@ public class CharacterMovement : MonoBehaviour
 
         m_wasGrounded = m_isGrounded;
     }
+
+
     Vector3 targetPoint = new Vector3(-1,-1,-1);
     private void DirectUpdate()
     {
+        //Debug.Log(
+        //    "Target point: " + targetPoint + ", Jugador: " + transform.position + 
+        //    ", InputVector: " + leftJoystick.inputVector);
+
         if (targetPoint.x == -1)
             targetPoint = transform.position;
         Transform camera = Camera.main.transform;
         Vector3 tForward = camera.forward;
         float cx = -Mathf.Sign(tForward.x);
         float cz = -Mathf.Sign(tForward.z);
-        float v = Input.GetAxisRaw("Vertical");
-        float h = Input.GetAxisRaw("Horizontal");
+
+        float h = Mathf.Round(leftJoystick.inputVector.x);
+        float v = Mathf.Round(leftJoystick.inputVector.y);
+
         if (targetPoint == transform.position)
         {
             float factor = v != 0 && h != 0 ? 2 : 1;
@@ -139,7 +150,6 @@ public class CharacterMovement : MonoBehaviour
             }
         }  
         transform.position = Vector3.MoveTowards(transform.position, targetPoint, step);
-        animationSpeed = animationSpeed == -1 ? (Vector3.Distance(transform.position, targetPoint) == 0 ? Mathf.Abs(h) + Mathf.Abs(v) : 1) : animationSpeed;
-        m_animator.SetFloat("MoveSpeed", animationSpeed);
+        m_animator.SetFloat("MoveSpeed", animationSpeed == -1 ? (Vector3.Distance(transform.position, targetPoint) == 0 ? Mathf.Abs(h) + Mathf.Abs(v) : 1) : animationSpeed);
     }
 }

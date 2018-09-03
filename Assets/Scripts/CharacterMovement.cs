@@ -136,13 +136,13 @@ public class CharacterMovement : MonoBehaviour
         float animationSpeed = -1;
         if ((xDiff == 1 || xDiff == 0) && (zDiff == 1 || zDiff == 0) && !(xDiff == 0 && zDiff == 0))
         {
-            if (Physics.CheckSphere(new Vector3(targetPoint.x, 0.6f, targetPoint.z), 0.5f))
+            if (Physics.CheckSphere(new Vector3(targetPoint.x, 0.6f, targetPoint.z), 0.5f) || !isFloor(targetPoint.x, targetPoint.z))
             {
                 Debug.Log("Colisión directa:" + targetPoint + ", Jugador" + transform.position);
                 targetPoint = transform.position;
                 animationSpeed = 0;
             }
-            else if (Physics.CheckSphere(new Vector3(targetPoint.x, 0.6f, transform.position.z), 0.5f) && Physics.CheckSphere(new Vector3(transform.position.x, 0.6f, targetPoint.z), 0.5f))
+            else if ((Physics.CheckSphere(new Vector3(targetPoint.x, 0.6f, transform.position.z), 0.5f)|| !isFloor(targetPoint.x, targetPoint.z)) && (!isFloor(targetPoint.x, targetPoint.z) || Physics.CheckSphere(new Vector3(transform.position.x, 0.6f, targetPoint.z), 0.5f)))
             {
                 Debug.Log("Colisión indirecta:" + targetPoint + ", Jugador" + transform.position);
                 targetPoint = transform.position;
@@ -151,5 +151,16 @@ public class CharacterMovement : MonoBehaviour
         }  
         transform.position = Vector3.MoveTowards(transform.position, targetPoint, step);
         m_animator.SetFloat("MoveSpeed", animationSpeed == -1 ? (Vector3.Distance(transform.position, targetPoint) == 0 ? Mathf.Abs(h) + Mathf.Abs(v) : 1) : animationSpeed);
+    }
+    private bool isFloor(float x, float z)
+    {
+        var collidersInRange = Physics.OverlapSphere(new Vector3(x,0,z), 0.5f);
+
+        foreach (Collider currentCollider in collidersInRange)
+        {
+            if (currentCollider.tag == "floor")
+                return true;
+        }
+        return false;
     }
 }

@@ -16,6 +16,7 @@ public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     // Update is called once per frame
     void Update()
     {
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -23,11 +24,9 @@ public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         first = eventData.position;
     }
 
-
     public void OnPointerUp(PointerEventData eventData)
     {
         TouchDist = eventData.position - first;
         Debug.Log(TouchDist);
     }
-
 }
